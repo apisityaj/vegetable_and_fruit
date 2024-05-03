@@ -4,6 +4,6 @@ export type ListPage = {
 };
 
 export type VegetableAndFruit = {
-    type: string;
+    type: 'Fruit' | 'Vegetable';
     name: string;
 };
