@@ -8,14 +8,16 @@ export default function NavBar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     return (
-        <nav className="bg-white mb-8">
-            <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-                <div className="flex items-center ">
-                    <img src="/next.svg" className="h-5" alt="Flowbite Logo" />
+        <nav className="mb-8">
+            <div className="flex flex-wrap items-center justify-between max-w-screen-xl mx-auto p-4">
+                <div className="flex items-center">
+                    <Link href={"/"}>
+                        <img src="/next.svg" className="h-5" alt="Logo" />
+                    </Link>
                 </div>
                 <button
                     type="button"
-                    className="inline-flex items-center justify-center p-2 w-10 h-10  text-sm text-gray-500 rounded-lg md:hidden "
+                    className="inline-flex items-center justify-center rounded-lg md:hidden p-2 w-10 h-10 text-sm text-gray-500"
                     aria-controls="navbar-default"
                     aria-expanded="false"
                     onClick={() => { setIsMenuOpen(!isMenuOpen) }}
