@@ -62,6 +62,12 @@ const ItemManager: React.FC = () => {
   };
 
   const undoMoveItem = () => {
+    // Check item fruit and veg 
+    if (itemsFruit.length === 0 && itemsVeget.length === 0) {
+      console.log('No items to undo.');
+      return;
+    }
+
     let lastItem = stackItems.pop();
     if (lastItem) {
       const targetColumn =
