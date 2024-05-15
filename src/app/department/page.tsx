@@ -111,9 +111,15 @@ const UserInterface: React.FC = () => {
   };
 
   const transformedData = transformData();
-  console.log("Tranforms JSON data from API", transformedData);
+
   return (
     <div>
+      <div
+        className=" text-center font-bold text-blue-600"
+        onClick={() => console.log("Tranforms JSON data from API", transformedData)}
+      >
+        Click to view JSON data in console log
+      </div>
       {Object.entries(transformedData).map(([department, data]) => {
         return (
           <div
