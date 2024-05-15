@@ -41,7 +41,7 @@ const ItemManager: React.FC = () => {
       });
 
       targetColumn((prev) => prev.filter((i) => i !== item));
-    }, 7000);
+    }, 5000);
 
     // Update itemTimeouts state
     setItemTimeouts((prev) => ({
