@@ -7,8 +7,16 @@ const ItemManager: React.FC = () => {
   const [itemsFruit, setItemsFruit] = useState<VegetableAndFruit[]>([]);
   const [itemsVeget, setItemsVeget] = useState<VegetableAndFruit[]>([]);
   const [stackItems, setStackItems] = useState<VegetableAndFruit[]>([]);
+  const [itemTimeouts, setItemTimeouts] = useState<{
+    [key: string]: NodeJS.Timeout;
+  }>({});
 
   const handleItemClick = (item: VegetableAndFruit) => {
+    // Clear previous timeout for this item
+    if (itemTimeouts[item.name]) {
+      clearTimeout(itemTimeouts[item.name]);
+    }
+    
     // Add item to the target column
     const targetColumn = item?.type === "Fruit" ? setItemsFruit : setItemsVeget;
     targetColumn((prev) => [...prev, item]);
@@ -20,7 +28,7 @@ const ItemManager: React.FC = () => {
     setStackItems((prev) => [...prev, item]);
 
     // Set timeout to move the item back to the displayed items list after 5 seconds
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       setItems((prev) => {
         const hasDuplicate = prev.some(
           (hasitem) =>
@@ -33,17 +41,34 @@ const ItemManager: React.FC = () => {
       });
 
       targetColumn((prev) => prev.filter((i) => i !== item));
-    }, 5000);
+    }, 7000);
+
+    // Update itemTimeouts state
+    setItemTimeouts((prev) => ({
+      ...prev,
+      [item.name]: timeoutId,
+    }));
   };
 
   const handleItemReturn = (item: VegetableAndFruit) => {
     const targetColumn = item?.type === "Fruit" ? setItemsFruit : setItemsVeget;
     targetColumn((prev) => prev.filter((i) => i !== item));
     setItems((prev) => [...prev, item]);
+
+    // Clear timeout for this item
+    if (itemTimeouts[item.name]) {
+      clearTimeout(itemTimeouts[item.name]);
+    }
   };
 
   const undoMoveItem = () => {
-    const lastItem = stackItems.pop();
+    // Check item fruit and veg 
+    if (itemsFruit.length === 0 && itemsVeget.length === 0) {
+      console.log('No items to undo.');
+      return;
+    }
+
+    let lastItem = stackItems.pop();
     if (lastItem) {
       const targetColumn =
         lastItem.type === "Fruit" ? setItemsFruit : setItemsVeget;
@@ -51,8 +76,12 @@ const ItemManager: React.FC = () => {
       setItems((prev) => [...prev, lastItem]);
     }
     setStackItems([...stackItems]);
+  
+    // Clear timeout for this item
+    if (lastItem && itemTimeouts[lastItem.name]) {
+      clearTimeout(itemTimeouts[lastItem.name]);
+    }
   };
-
   return (
     <div className="flex flex-col md:flex-row lg:flex-row w-full h-full md:space-x-4 mb-5">
       <div className="flex-1">
@@ -96,7 +125,10 @@ const ItemManager: React.FC = () => {
             <div
               key={item?.name}
               className="text-center border rounded-md mt-2 pt-2 pb-2"
-              onClick={() => handleItemReturn(item)}
+              onClick={(e) => {
+                e.stopPropagation(); // Stop event bubbling
+                handleItemReturn(item);
+              }}
             >
               {item?.name}
             </div>
